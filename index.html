@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>跳转中...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    const pages = [
+      "https://wa.me/447851577966",
+      "https://wa.me/447563734086",
+      "https://wa.me/447843751871",
+      "https://wa.me/447563734106",
+    ];
+
+    function redirect() {
+      let assignedIndex = localStorage.getItem("assignedPageIndex");
+      if (assignedIndex === null) {
+        assignedIndex = Math.floor(Math.random() * pages.length);
+        localStorage.setItem("assignedPageIndex", assignedIndex);
+      }
+      window.location.href = pages[assignedIndex];
+    }
+
+    window.onload = redirect;
+  </script>
+</head>
+<body>
+</body>
+</html>
