@@ -5,12 +5,12 @@
   <title>跳转中...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
-    // 所有 WhatsApp 链接（权重均等）
+    // 所有 WhatsApp 链接
     const links = [
       "https://wa.me/447851577966",
       "https://wa.me/447563734086",
       "https://wa.me/447843751871",
-      "https://wa.me/447563734106" 
+      "https://wa.me/447563734106"
     ];
 
     const LOCAL_KEY = "waAssignedIndex";
@@ -21,7 +21,6 @@
         return parseInt(saved, 10);
       }
 
-      // 从 URL 参数中读取分流编号（用于测试或外部控制）
       const params = new URLSearchParams(window.location.search);
       const testIndex = parseInt(params.get("test"), 10);
       if (!isNaN(testIndex) && testIndex >= 0 && testIndex < links.length) {
@@ -29,7 +28,6 @@
         return testIndex;
       }
 
-      // 随机分配一个 index，保存
       const randomIndex = Math.floor(Math.random() * links.length);
       localStorage.setItem(LOCAL_KEY, randomIndex);
       return randomIndex;
@@ -38,7 +36,6 @@
     function redirect() {
       const index = getAssignedIndex();
       const target = links[index];
-      console.log("用户跳转链接：", target);
       window.location.href = target;
     }
 
@@ -46,6 +43,5 @@
   </script>
 </head>
 <body>
-  <p>正在跳转，请稍候...</p>
 </body>
 </html>
