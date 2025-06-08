@@ -5,25 +5,50 @@
   <title>跳转中...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
-    const pages = [
+    // 所有 WhatsApp 链接
+    const links = [
       "https://wa.me/447851577966",
       "https://wa.me/447563734086",
       "https://wa.me/447843751871",
-      "https://wa.me/447563734106"
+      "https://wa.me/447563734106" 
     ];
 
-    function redirect() {
-      let assignedIndex = localStorage.getItem("assignedPageIndex");
-      if (assignedIndex === null) {
-        assignedIndex = Math.floor(Math.random() * pages.length);
-        localStorage.setItem("assignedPageIndex", assignedIndex);
+    // 所有链接权重相同（平均轮换）
+    const weights = Array(links.length).fill(1);
+
+    // 构建加权池
+    const weightedLinks = [];
+    for (let i = 0; i < links.length; i++) {
+      for (let j = 0; j < weights[i]; j++) {
+        weightedLinks.push(links[i]);
       }
-      window.location.href = pages[assignedIndex];
+    }
+
+    function redirect() {
+      const KEY = "assignedIndex";
+      let index = localStorage.getItem(KEY);
+
+      if (index === null) {
+        // 获取全局轮换编号
+        let global = parseInt(localStorage.getItem("globalIndex") || "0", 10);
+        if (isNaN(global)) global = 0;
+
+        index = global % weightedLinks.length;
+
+        // 保存用户分配
+        localStorage.setItem(KEY, index);
+        // 自增轮换编号
+        localStorage.setItem("globalIndex", global + 1);
+      }
+
+      const link = weightedLinks[index];
+      window.location.href = link;
     }
 
     window.onload = redirect;
   </script>
 </head>
 <body>
+  <p>正在跳转，请稍候...</p>
 </body>
 </html>
