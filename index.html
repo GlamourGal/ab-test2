@@ -5,40 +5,40 @@
   <title>跳转中...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
-    // 所有 WhatsApp 链接（权重均等）
+    // 所有 WhatsApp 链接（轮换顺序分配）
     const links = [
       "https://wa.me/447851577966",
       "https://wa.me/447563734086",
       "https://wa.me/447843751871",
-      "https://wa.me/447563734106" 
+      "https://wa.me/447563734106"
     ];
 
     const LOCAL_KEY = "waAssignedIndex";
+    const GLOBAL_KEY = "waGlobalCounter";
 
     function getAssignedIndex() {
-      let saved = localStorage.getItem(LOCAL_KEY);
-      if (saved !== null) {
-        return parseInt(saved, 10);
-      }
+      // 如果已分配过，直接返回
+      const saved = localStorage.getItem(LOCAL_KEY);
+      if (saved !== null) return parseInt(saved, 10);
 
-      // 从 URL 参数中读取分流编号（用于测试或外部控制）
-      const params = new URLSearchParams(window.location.search);
-      const testIndex = parseInt(params.get("test"), 10);
-      if (!isNaN(testIndex) && testIndex >= 0 && testIndex < links.length) {
-        localStorage.setItem(LOCAL_KEY, testIndex);
-        return testIndex;
-      }
+      // 从 globalCounter 读取当前轮换编号（跨用户模拟）
+      let globalIndex = parseInt(localStorage.getItem(GLOBAL_KEY) || "0", 10);
+      if (isNaN(globalIndex)) globalIndex = 0;
 
-      // 随机分配一个 index，保存
-      const randomIndex = Math.floor(Math.random() * links.length);
-      localStorage.setItem(LOCAL_KEY, randomIndex);
-      return randomIndex;
+      // 按顺序分配
+      const assignedIndex = globalIndex % links.length;
+
+      // 存储用户专属索引
+      localStorage.setItem(LOCAL_KEY, assignedIndex);
+      // 增加 globalIndex
+      localStorage.setItem(GLOBAL_KEY, globalIndex + 1);
+
+      return assignedIndex;
     }
 
     function redirect() {
       const index = getAssignedIndex();
       const target = links[index];
-      console.log("用户跳转链接：", target);
       window.location.href = target;
     }
 
@@ -46,6 +46,5 @@
   </script>
 </head>
 <body>
-  <p>正在跳转，请稍候...</p>
 </body>
 </html>
